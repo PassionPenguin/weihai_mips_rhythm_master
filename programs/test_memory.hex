@@ -1,0 +1,87 @@
+// Test 3: Memory Store/Fetch - Machine Code
+// Assembled from test_memory.asm
+
+3C10FFFF  // lui  $s0, 0xFFFF        -> 0x3C10FFFF
+20110100  // addi $s1, $zero, 0x0100 -> 0x20110100
+
+200800AA  // addi $t0, $zero, 0xAA   -> 0x200800AA
+AE280000  // sw   $t0, 0($s1)        -> 0xAE280000
+
+200800BB  // addi $t0, $zero, 0xBB   -> 0x200800BB
+AE280004  // sw   $t0, 4($s1)        -> 0xAE280004
+
+200800CC  // addi $t0, $zero, 0xCC   -> 0x200800CC
+AE280008  // sw   $t0, 8($s1)        -> 0xAE280008
+
+200800DD  // addi $t0, $zero, 0xDD   -> 0x200800DD
+AE28000C  // sw   $t0, 12($s1)       -> 0xAE28000C
+
+2008000F  // addi $t0, $zero, 0x0F   -> 0x2008000F
+AE080000  // sw   $t0, 0($s0)        -> 0xAE080000
+
+20090000  // addi $t1, $zero, 0      -> 0x20090000
+21290001  // addi $t1, $t1, 1        -> 0x21290001
+200A00C8  // addi $t2, $zero, 200    -> 0x200A00C8
+012A502A  // slt  $t2, $t1, $t2      -> 0x012A502A
+1540FFFC  // bne  $t2, $zero, delay1 -> 0x1540FFFC
+
+8E280000  // lw   $t0, 0($s1)        -> 0x8E280000
+200B00AA  // addi $t3, $zero, 0xAA   -> 0x200B00AA
+010B6022  // sub  $t4, $t0, $t3      -> 0x010B6022
+1580002B  // bne  $t4, $zero, error  -> 0x1580002B
+
+8E280004  // lw   $t0, 4($s1)        -> 0x8E280004
+200B00BB  // addi $t3, $zero, 0xBB   -> 0x200B00BB
+010B6022  // sub  $t4, $t0, $t3      -> 0x010B6022
+15800027  // bne  $t4, $zero, error  -> 0x15800027
+
+8E280008  // lw   $t0, 8($s1)        -> 0x8E280008
+200B00CC  // addi $t3, $zero, 0xCC   -> 0x200B00CC
+010B6022  // sub  $t4, $t0, $t3      -> 0x010B6022
+15800023  // bne  $t4, $zero, error  -> 0x15800023
+
+8E28000C  // lw   $t0, 12($s1)       -> 0x8E28000C
+200B00DD  // addi $t3, $zero, 0xDD   -> 0x200B00DD
+010B6022  // sub  $t4, $t0, $t3      -> 0x010B6022
+1580001F  // bne  $t4, $zero, error  -> 0x1580001F
+
+// success:
+20080000  // addi $t0, $zero, 0      -> 0x20080000
+AE080000  // sw   $t0, 0($s0)        -> 0xAE080000
+21080001  // addi $t0, $t0, 1        -> 0x21080001
+
+200D0000  // addi $t5, $zero, 0      -> 0x200D0000
+3C0D0001  // lui  $t5, 0x0001        -> 0x3C0D0001
+010D702A  // slt  $t6, $t0, $t5      -> 0x010D702A
+15C00001  // bne  $t6, $zero, success_delay -> 0x15C00001
+20080000  // addi $t0, $zero, 0      -> 0x20080000
+
+// success_delay:
+20090000  // addi $t1, $zero, 0      -> 0x20090000
+21290001  // addi $t1, $t1, 1        -> 0x21290001
+200A0064  // addi $t2, $zero, 100    -> 0x200A0064
+012A502A  // slt  $t2, $t1, $t2      -> 0x012A502A
+1540FFFC  // bne  $t2, $zero, sd_loop -> 0x1540FFFC
+08000020  // j    success_loop       -> 0x08000020
+
+// error:
+20085555  // addi $t0, $zero, 0x5555 -> 0x20085555
+AE080000  // sw   $t0, 0($s0)        -> 0xAE080000
+
+// error_loop:
+20090000  // addi $t1, $zero, 0      -> 0x20090000
+21290001  // addi $t1, $t1, 1        -> 0x21290001
+200A00C8  // addi $t2, $zero, 200    -> 0x200A00C8
+012A502A  // slt  $t2, $t1, $t2      -> 0x012A502A
+1540FFFC  // bne  $t2, $zero, err_delay -> 0x1540FFFC
+
+200BAAAA  // addi $t3, $zero, 0xAAAA -> 0x200BAAAA
+AE0B0000  // sw   $t3, 0($s0)        -> 0xAE0B0000
+
+20090000  // addi $t1, $zero, 0      -> 0x20090000
+21290001  // addi $t1, $t1, 1        -> 0x21290001
+200A00C8  // addi $t2, $zero, 200    -> 0x200A00C8
+012A502A  // slt  $t2, $t1, $t2      -> 0x012A502A
+1540FFFC  // bne  $t2, $zero, err_delay2 -> 0x1540FFFC
+
+0800002F  // j    error              -> 0x0800002F

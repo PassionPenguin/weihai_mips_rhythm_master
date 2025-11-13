@@ -1,0 +1,38 @@
+// Test 2: Switch to Decimal - Machine Code
+// Assembled from test_switch_decimal.asm
+
+3C10FFFF  // lui  $s0, 0xFFFF        -> 0x3C10FFFF
+
+// read_loop:
+8E080004  // lw   $t0, 4($s0)        -> 0x8E080004
+2009000F  // addi $t1, $zero, 15     -> 0x2009000F
+01095024  // and  $t2, $t0, $t1      -> 0x01095024
+AE0A0000  // sw   $t2, 0($s0)        -> 0xAE0A0000
+
+200B000A  // addi $t3, $zero, 10     -> 0x200B000A
+200C0000  // addi $t4, $zero, 0      -> 0x200C0000
+00006820  // add  $t5, $zero, $t2    -> 0x000A6820
+
+// divide_loop:
+016B702A  // slt  $t6, $t5, $t3      -> 0x016B702A
+15C00003  // bne  $t6, $zero, divide_done -> 0x15C00003
+016B6822  // sub  $t5, $t5, $t3      -> 0x016B6822
+218C0001  // addi $t4, $t4, 1        -> 0x218C0001
+08000008  // j    divide_loop        -> 0x08000008
+
+// divide_done:
+018C7020  // add  $t6, $t4, $t4      -> 0x018C7020
+01CE7020  // add  $t6, $t6, $t6      -> 0x01CE7020
+01CE7020  // add  $t6, $t6, $t6      -> 0x01CE7020
+01CE7020  // add  $t6, $t6, $t6      -> 0x01CE7020
+01CD7820  // add  $t7, $t6, $t5      -> 0x01CD7820
+
+AE0F000C  // sw   $t7, 12($s0)       -> 0xAE0F000C
+
+20100000  // addi $t8, $zero, 0      -> 0x20100000
+22100001  // addi $t8, $t8, 1        -> 0x22100001
+20090032  // addi $t9, $zero, 50     -> 0x20090032
+0209482A  // slt  $t9, $t8, $t9      -> 0x0209482A
+1520FFFC  // bne  $t9, $zero, delay  -> 0x1520FFFC
+
+08000001  // j    read_loop          -> 0x08000001

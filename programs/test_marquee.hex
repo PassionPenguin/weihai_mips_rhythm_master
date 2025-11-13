@@ -1,0 +1,25 @@
+// Test 1: LED Marquee - Machine Code
+// Assembled from test_marquee.asm
+
+3C10FFFF  // lui  $s0, 0xFFFF        -> 0x3C10FFFF
+20080001  // addi $t0, $zero, 1      -> 0x20080001
+
+// marquee_loop:
+AE080000  // sw   $t0, 0($s0)        -> 0xAE080000
+
+// delay loop:
+20090000  // addi $t1, $zero, 0      -> 0x20090000
+21290001  // addi $t1, $t1, 1        -> 0x21290001
+200A0064  // addi $t2, $zero, 100    -> 0x200A0064
+012A582A  // slt  $t3, $t1, $t2      -> 0x012A582A
+1560FFFC  // bne  $t3, $zero, delay  -> 0x1560FFFC
+
+01084020  // add  $t0, $t0, $t0      -> 0x01084020
+
+200C0000  // addi $t4, $zero, 0      -> 0x200C0000
+3C0C0001  // lui  $t4, 0x0001        -> 0x3C0C0001
+010C682A  // slt  $t5, $t0, $t4      -> 0x010C682A
+15A0FFF6  // bne  $t5, $zero, marquee_loop -> 0x15A0FFF6
+
+20080001  // addi $t0, $zero, 1      -> 0x20080001
+08000002  // j    marquee_loop       -> 0x08000002
